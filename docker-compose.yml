@@ -1,0 +1,27 @@
+services:
+  membership-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: firstclub-membership
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:membershipdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/api/v1/plans"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+# ── Quick-start: run with just H2 (no external DB needed) ─────────────────────
+# docker compose up --build
+#
+# ── Access points ─────────────────────────────────────────────────────────────
+# API:         http://localhost:8080/api/v1/plans
+# Swagger UI:  http://localhost:8080/swagger-ui.html
+# H2 Console:  http://localhost:8080/h2-console
+#              JDBC URL: jdbc:h2:mem:membershipdb  |  User: sa  |  Password: (empty)
